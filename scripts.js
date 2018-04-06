@@ -175,11 +175,23 @@ function deleteBookingByIndex(indexInput) {
     }
     console.log(roomBookArray);
     localStorage.setObject('userDetails', roomBookArray);
-    location.reload();
     console.log(`The ${indexInput}th item has been removed`);
+    location.reload();
 }
 
-
+function changeBookingDate(indexInput) {
+    //Getting the details
+    var roomBookArray = localStorage.getObject('userDetails');
+    //Retrieving user requests
+    var checkInDateChange = prompt("New CheckIn date (Y-M-D):\nBlank if unchanged", roomBookArray[indexInput].dateIn);
+    var checkOutDateChange = prompt("New CheckOut date (Y-M-D):\nBlank if unchanged", roomBookArray[indexInput].dateOut);
+    //Setting user requests
+    roomBookArray[indexInput].dateIn = checkInDateChange;
+    roomBookArray[indexInput].dateOut = checkOutDateChange;
+    //Changing local storage
+    localStorage.setObject('userDetails', roomBookArray);
+    location.reload();
+}
 
 function displayCurrentBookings() {
 
@@ -205,6 +217,7 @@ function displayCurrentBookings() {
             for (i = 0; i<roomBookArray.length; i++) {
 
                 var br = document.createElement("br");
+                var hr = document.createElement("hr");
 
                 //Creating an element for each room
 
@@ -245,14 +258,34 @@ function displayCurrentBookings() {
                 load.appendChild(paraConfirmed);
                 load.appendChild(br);
 
-                //Options to modify the booking, based on the ith position in the array
+                /*
+                        Options to modify the booking,
+                        -based on the ith position in the array
+                 */
+                var thisbooking = i;
 
+                //Delete
                 var deleteBooking = document.createElement("BUTTON");
                 var deleteBookingText = document.createTextNode("Cancel booking");
                 deleteBooking.appendChild(deleteBookingText);
-                var thisbooking = i;
                 deleteBooking.onclick = function() {deleteBookingByIndex(thisbooking)};
                 load.appendChild(deleteBooking);
+
+                //Change Date
+                var modifyBookingDate = document.createElement("BUTTON");
+                var modifyBookingDateText = document.createTextNode("Modify Dates");
+                modifyBookingDate.appendChild(modifyBookingDateText);
+                modifyBookingDate.onclick = function() {changeBookingDate(thisbooking)};
+                load.appendChild(modifyBookingDate);
+
+
+                load.appendChild(br);
+                load.appendChild(br);
+
+                //Divider between rooms, doesn't display on final room.
+                if ((i+1) != roomBookArray.length) {
+                    load.appendChild(hr);
+                }
             }
 
         } else {
