@@ -40,6 +40,7 @@ window.addEventListener('scroll', fixNav);
 */
 
 var modal = document.getElementById('myModal');
+var room;
 
 //This will help us pre-fill the date
 Date.prototype.toDateInputValue = (function() {
@@ -52,6 +53,19 @@ function resetModal() {
     hideID("userInformationTaken");
     hideID("moreUserInformation");
     showID("dateInformation");
+}
+
+function openBookingModalSingle() {
+    openBookingModal();
+    room = "single";
+}
+function openBookingModalDouble() {
+    openBookingModal("double");
+    room = "double";
+}
+function openBookingModalFamily() {
+    openBookingModal("family");
+    room = "family";
 }
 
 function openBookingModal() {
@@ -83,7 +97,7 @@ function confirmBooking() {
         let userBookingEmail = document.getElementById("userBookingEmail").value;
         document.getElementById("emailConfirmed").innerText =
             `Confirmation email sent to ${userBookingEmail}`;
-        book("familyRoom");
+        book();
     } else {
         alert("We'll need your email address to continue!");
     }
@@ -96,7 +110,16 @@ window.onclick = function(event) {
     }
 }
 
-function book(room) {
+Storage.prototype.setObject = function(key, value) {
+    this.setItem(key, JSON.stringify(value));
+}
+
+Storage.prototype.getObject = function(key) {
+    var value = this.getItem(key);
+    return value && JSON.parse(value);
+}
+
+function book() {
     if (typeof(Storage) === "undefined") {
         alert("Sorry! No web storage available in your browser!");
     } else {
@@ -107,34 +130,115 @@ function book(room) {
         var dateIn = document.getElementById("dateIn").value;
         var dateOut = document.getElementById("dateOut").value;
 
-        //If the user has not booked with us before this session
+        //If the user has booked with us before this session
          if (sessionStorage.getItem("bookedBefore") == "yes") {
-            //The user HAS booked before, retrieve old data
-            var deets = sessionStorage.getItem("userDetails");
-            console.log(deets);
-            var userDetails = JSON.parse(deets);
 
-            // var userDetails = JSON.parse(sessionStorage.userDetails);
-            userDetails.push({userEmail, roomBooked, dateIn, dateOut});
-            // userDetails.push({email : `${userEmail}`, room: `${roomBooked}` ,in: `${dateIn}`, out:`${dateOut}`});
-            sessionStorage.setItem("userDetails", userDetails);
+            //The user HAS booked before, retrieve old data
+            var userData = localStorage.getObject('userDetails');
+            console.log(userData);
+
+            //Pushing new data to the array, setting it to system
+            userData.push({userEmail, roomBooked, dateIn, dateOut});
+            localStorage.setObject('userDetails', userData);
 
             console.log("User HAS booked before, updated details:");
-            console.log(userDetails);
+            console.log(localStorage.getObject('userDetails'));
         } else {
+
              console.log("User has NOT booked before, new details");
              sessionStorage.setItem("bookedBefore", "yes");
-             //ES6 Property value shorthand! (if var is same name, don't write twice.
+
+             /*     ES6 Property value shorthand array creation     */
              var userDetails = [{userEmail, roomBooked, dateIn, dateOut}];
-             var deets = JSON.stringify(userDetails);
-             sessionStorage.setItem("userDetails", deets);
 
+             /*     Convert JSON, store      */
+             localStorage.setObject('userDetails', userDetails);
 
-             console.log(userDetails);
+             console.log("here is what went into system storage:");
+             console.log(localStorage.getObject('userDetails'));
          }
     }
 }
-// var userEmail = {'email':'blah'};
-// sessionStorage.setItem('user', JSON.stringify(user));
-// var obj = JSON.parse(sessionStorage.user);
 
+
+/*
+
+        Dashboard functions
+
+ */
+
+
+
+function displayCurrentBookings() {
+
+    console.log("cool");
+
+    if (typeof(Storage) === "undefined") {
+        alert("Sorry! No web storage available in your browser!");
+    } else {
+        //If the user has not booked with us before this session
+        if (sessionStorage.getItem("bookedBefore") == "yes") {
+
+            //Getting the details
+            var roomBookArray = localStorage.getObject('userDetails');
+
+            console.log("Local storage values:");
+            console.log(roomBookArray);
+
+            //Updating the page header
+            document.getElementById("roomHeaderDisplay").innerText =
+                `Rooms(${roomBookArray.length})`;
+
+            //Iterate through JSON to output on screen
+            for (i = 0; i<roomBookArray.length; i++) {
+
+                var br = document.createElement("br");
+
+                //Creating an element for each room
+
+                //Image for room
+                var roomImg = document.createElement("IMG");
+                if (roomBookArray[i].roomBooked == "family") {
+                    roomImg.setAttribute("src", "images/room-1.png");
+                } else if (roomBookArray[i].roomBooked == "double") {
+                    roomImg.setAttribute("src", "images/room-2.png");
+                } else if (roomBookArray[i].roomBooked == "single") {
+                    roomImg.setAttribute("src", "images/room-3.png");
+                }
+
+                roomImg.setAttribute("width", "304");
+                roomImg.setAttribute("height", "228");
+                roomImg.setAttribute("alt", "Room reservation image");
+
+
+                //What type of room
+                var paraType = document.createElement("P");
+                var type = document.createTextNode(`Room #${i+1} is a ${roomBookArray[i].roomBooked} room.`);
+                //What dates
+                var paraDates = document.createElement("P");
+                var dates = document.createTextNode(`${roomBookArray[i].dateIn} - ${roomBookArray[i].dateOut}`);
+                //Who confirmed
+                var paraConfirmed = document.createElement("P");
+                var confirmed = document.createTextNode(`Confirmation email sent to ${roomBookArray[i].userEmail}`);
+
+                //Placing sections into room element, appending to page
+                paraType.appendChild(type);
+                paraDates.appendChild(dates);
+                paraConfirmed.appendChild(confirmed);
+
+                var load = document.getElementById("loadRoomsHere");
+                load.appendChild(roomImg);
+                load.appendChild(paraType);
+                load.appendChild(paraDates);
+                load.appendChild(paraConfirmed);
+                load.appendChild(br);
+
+
+            }
+
+        } else {
+            document.getElementById("roomHeaderDisplay").innerText =
+                "Sorry, You have not booked any rooms with us.";
+        }
+    }
+}
