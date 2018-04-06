@@ -30,16 +30,25 @@
 
 
 </head>
-
 <body>
-<div class="topnav dark-bg" id="topNav">
-    <a href="index.html">Home</a>
-    <a href="rooms.html" class = "active">Rooms</a>
-    <a href="Services.html">Services</a>
-    <a href="Dashboard.html">Dashboard</a>
-    <a href="Search.html">Search</a>
-    <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="responsiveMenu()">&#9776;</a>
-</div>
+
+<header>
+    <div class = "footerName footerText">
+        <img src="images/logo.png" alt="Avatar" class="avatar">
+        <span><h1>Hotel on Swanson</h1></span>
+    </div>
+</header>
+
+<nav id="main">
+    <ul>
+        <li class="logo"><a href="#">
+            <img src="images/logo.png" alt="Avatar" class="avatar" size="30px 30px">
+        </a></li>
+        <li><a href="rooms.html">Rooms</a></li>
+        <li><a href="Services.html">Services</a></li>
+        <li><a href="Dashboard.html">Dashboard</a></li>
+    </ul>
+</nav>
 
 
 <div class="content">
@@ -69,6 +78,9 @@
                     Enjoy a relaxing post-buffet food coma without any stress of family worry. <br>
                     Our rooms are large enough for the kids to watch tv, while you doze away.
                 </p>
+                <p>
+                    <button onclick="openBookingModal()">Book this room</button>
+                </p>
             </div>
 
         </div>
@@ -77,7 +89,7 @@
         </div>
     </div>
 
-    <br> <br> <hr> <br> <br>
+    <br> <br> <br> <br>
 
 
     <!--Three Point with Picture-->
@@ -103,6 +115,9 @@
                     Track all your spending through the website dashboard.
                 </p>
                 <p>
+                    <button onclick="openBookingModal()">Book this room</button>
+                </p>
+                <p>
                     <a href="sorry.html">See the dashboard</a><br>
                     <a href="sorry.html">Read the menu</a>
                 </p>
@@ -115,7 +130,7 @@
         </div>
     </div>
 
-    <br> <br> <hr> <br> <br>
+    <br> <br> <br> <br>
 
     <!--Three Point with Picture-->
     <div class = "horizontalStack light-bg">
@@ -130,6 +145,9 @@
                 <p>
                     Stood up? literally nobody ever has had a layover in Adelaide, <br>
                     so you're the only market we can target these rooms to.
+                </p>
+                <p>
+                    <button onclick="openBookingModal()">Book this room</button>
                 </p>
             </div>
 
@@ -190,6 +208,42 @@
             </div>
 
         </div>
+    </div>
+</div>
+
+
+<!--Modal for booking-->
+<!--Modal for booking-->
+
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>What date works for you?</h2>
+        </div>
+        <div class="modal-body" id = "dateInformation">
+            <p>Check in: <input id = "dateIn" type="date"></p>
+            <p>Check out: <input id = "dateOut" type="date"></p>
+            <button onclick="getUserBookingData()">Continue</button>
+        </div>
+
+        <div class="modal-body" id = "moreUserInformation">
+            <p id = "datesPreConfirmation">-</p>
+            <p>Please confirm your email address:</p>
+            <input id = "userBookingEmail" type="email" placeholder="yourname@example.com"> <br> <br>
+            <button onclick="confirmBooking()">Confirm</button>
+        </div>
+
+        <div class="modal-body" id = "userInformationTaken">
+            <p id = "emailConfirmed"></p>
+            <p>All Booked! Thank you. <br> You can manage this from your Dashboard </p>
+            <button>View Dashboard</button>
+        </div>
+        <!--<div class="modal-footer">-->
+            <!--<h3>For more information, call 08-8338-1234</h3>-->
+        <!--</div>-->
     </div>
 </div>
 
