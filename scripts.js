@@ -167,6 +167,18 @@ function book() {
 
  */
 
+function deleteBookingByIndex(indexInput) {
+    //Getting the details
+    var roomBookArray = localStorage.getObject('userDetails');
+    if (indexInput > -1) {
+        roomBookArray.splice(indexInput, 1);
+    }
+    console.log(roomBookArray);
+    localStorage.setObject('userDetails', roomBookArray);
+    location.reload();
+    console.log(`The ${indexInput}th item has been removed`);
+}
+
 
 
 function displayCurrentBookings() {
@@ -233,7 +245,14 @@ function displayCurrentBookings() {
                 load.appendChild(paraConfirmed);
                 load.appendChild(br);
 
+                //Options to modify the booking, based on the ith position in the array
 
+                var deleteBooking = document.createElement("BUTTON");
+                var deleteBookingText = document.createTextNode("Cancel booking");
+                deleteBooking.appendChild(deleteBookingText);
+                var thisbooking = i;
+                deleteBooking.onclick = function() {deleteBookingByIndex(thisbooking)};
+                load.appendChild(deleteBooking);
             }
 
         } else {
