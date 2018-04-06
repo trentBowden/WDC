@@ -1,4 +1,9 @@
-/* Generic functions */
+/*
+
+
+        Generic functions
+
+*/
 
 function hideID(element) {
     document.getElementById(element).style.display = "none";
@@ -7,7 +12,11 @@ function showID(element) {
     document.getElementById(element).style.display = "block";
 }
 
-/*  Navbar Items */
+/*
+
+            Navbar Items
+
+*/
 
 const nav = document.querySelector('#main');
 let topOfNav = nav.offsetTop;
@@ -23,7 +32,13 @@ function fixNav() {
 }
 window.addEventListener('scroll', fixNav);
 
-/* Booking Modal Functions */
+/*
+
+        Booking Modal Functions
+
+
+*/
+
 var modal = document.getElementById('myModal');
 
 //This will help us pre-fill the date
@@ -33,6 +48,12 @@ Date.prototype.toDateInputValue = (function() {
     return local.toJSON().slice(0,10);
 });
 
+function resetModal() {
+    hideID("userInformationTaken");
+    hideID("moreUserInformation");
+    showID("dateInformation");
+}
+
 function openBookingModal() {
     showID("myModal");
     document.getElementById("dateIn").value = new Date().toDateInputValue();
@@ -40,6 +61,7 @@ function openBookingModal() {
 }
 
 function closeBookingModal() {
+    resetModal();
     hideID("myModal");
 }
 
@@ -61,6 +83,7 @@ function confirmBooking() {
         let userBookingEmail = document.getElementById("userBookingEmail").value;
         document.getElementById("emailConfirmed").innerText =
             `Confirmation email sent to ${userBookingEmail}`;
+        book("familyRoom");
     } else {
         alert("We'll need your email address to continue!");
     }
@@ -69,7 +92,7 @@ function confirmBooking() {
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
     if (event.target == modal) {
-        hideID("myModal");
+        closeBookingModal();
     }
 }
 
@@ -85,27 +108,33 @@ function book(room) {
         var dateOut = document.getElementById("dateOut").value;
 
         //If the user has not booked with us before this session
-        if (!sessionStorage.getItem("bookedBefore") != "yes") {
-            sessionStorage.setItem("bookedBefore", "yes");
-
-            var userDetails = [
-                {email : userEmail, room: roomBooked ,in:dateIn, out:dateOut}
-            ];
-
-            $window.sessionStorage.user = JSON.stringify(userDetails);
-
-            //Console log for testing
-            console.log("User has NOT booked before, current details:");
-            console.log(userDetails);
-
-        } else {
+         if (sessionStorage.getItem("bookedBefore") == "yes") {
             //The user HAS booked before, retrieve old data
-            var userDetails = JSON.parse($window.sessionStorage.userDetails);
-            userDetails.push({email : userEmail, room: roomBooked ,in:dateIn, out:dateOut});
+            var deets = sessionStorage.getItem("userDetails");
+            console.log(deets);
+            var userDetails = JSON.parse(deets);
 
-            //Console log for testing
-            console.log("User HAS booked before, current details:");
+            // var userDetails = JSON.parse(sessionStorage.userDetails);
+            userDetails.push({userEmail, roomBooked, dateIn, dateOut});
+            // userDetails.push({email : `${userEmail}`, room: `${roomBooked}` ,in: `${dateIn}`, out:`${dateOut}`});
+            sessionStorage.setItem("userDetails", userDetails);
+
+            console.log("User HAS booked before, updated details:");
             console.log(userDetails);
-        }
+        } else {
+             console.log("User has NOT booked before, new details");
+             sessionStorage.setItem("bookedBefore", "yes");
+             //ES6 Property value shorthand! (if var is same name, don't write twice.
+             var userDetails = [{userEmail, roomBooked, dateIn, dateOut}];
+             var deets = JSON.stringify(userDetails);
+             sessionStorage.setItem("userDetails", deets);
+
+
+             console.log(userDetails);
+         }
     }
 }
+// var userEmail = {'email':'blah'};
+// sessionStorage.setItem('user', JSON.stringify(user));
+// var obj = JSON.parse(sessionStorage.user);
+
