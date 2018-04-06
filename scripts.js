@@ -183,8 +183,8 @@ function changeBookingDate(indexInput) {
     //Getting the details
     var roomBookArray = localStorage.getObject('userDetails');
     //Retrieving user requests
-    var checkInDateChange = prompt("New CheckIn date (Y-M-D):\nBlank if unchanged", roomBookArray[indexInput].dateIn);
-    var checkOutDateChange = prompt("New CheckOut date (Y-M-D):\nBlank if unchanged", roomBookArray[indexInput].dateOut);
+    var checkInDateChange = prompt("New CheckIn date (Y-M-D):\nExisting value shown below", roomBookArray[indexInput].dateIn);
+    var checkOutDateChange = prompt("New CheckOut date (Y-M-D):\nExisting value shown below", roomBookArray[indexInput].dateOut);
     //Setting user requests
     roomBookArray[indexInput].dateIn = checkInDateChange;
     roomBookArray[indexInput].dateOut = checkOutDateChange;
