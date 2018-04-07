@@ -8,6 +8,7 @@
 function hideID(element) {
     document.getElementById(element).style.display = "none";
 }
+
 function showID(element) {
     document.getElementById(element).style.display = "block";
 }
@@ -30,6 +31,7 @@ function fixNav() {
         document.body.style.paddingTop = 0;
     }
 }
+
 window.addEventListener('scroll', fixNav);
 
 /*
@@ -43,10 +45,10 @@ var modal = document.getElementById('myModal');
 var room;
 
 //This will help us pre-fill the date
-Date.prototype.toDateInputValue = (function() {
+Date.prototype.toDateInputValue = (function () {
     var local = new Date(this);
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
+    return local.toJSON().slice(0, 10);
 });
 
 function resetModal() {
@@ -59,10 +61,12 @@ function openBookingModalSingle() {
     openBookingModal();
     room = "single";
 }
+
 function openBookingModalDouble() {
     openBookingModal("double");
     room = "double";
 }
+
 function openBookingModalFamily() {
     openBookingModal("family");
     room = "family";
@@ -80,7 +84,7 @@ function closeBookingModal() {
 }
 
 function getUserBookingData() {
-    hideID("dateInformation")
+    hideID("dateInformation");
     var dateIn = document.getElementById("dateIn").value;
     var dateOut = document.getElementById("dateOut").value;
 
@@ -104,20 +108,20 @@ function confirmBooking() {
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
+window.onclick = function (event) {
     if (event.target == modal) {
         closeBookingModal();
     }
-}
+};
 
-Storage.prototype.setObject = function(key, value) {
+Storage.prototype.setObject = function (key, value) {
     this.setItem(key, JSON.stringify(value));
-}
+};
 
-Storage.prototype.getObject = function(key) {
+Storage.prototype.getObject = function (key) {
     var value = this.getItem(key);
     return value && JSON.parse(value);
-}
+};
 
 function book() {
     if (typeof(Storage) === "undefined") {
@@ -131,7 +135,7 @@ function book() {
         var dateOut = document.getElementById("dateOut").value;
 
         //If the user has booked with us before this session
-         if (sessionStorage.getItem("bookedBefore") == "yes") {
+        if (sessionStorage.getItem("bookedBefore") == "yes") {
 
             //The user HAS booked before, retrieve old data
             var userData = localStorage.getObject('userDetails');
@@ -145,18 +149,18 @@ function book() {
             console.log(localStorage.getObject('userDetails'));
         } else {
 
-             console.log("User has NOT booked before, new details");
-             sessionStorage.setItem("bookedBefore", "yes");
+            console.log("User has NOT booked before, new details");
+            sessionStorage.setItem("bookedBefore", "yes");
 
-             /*     ES6 Property value shorthand array creation     */
-             var userDetails = [{userEmail, roomBooked, dateIn, dateOut}];
+            /*     ES6 Property value shorthand array creation     */
+            var userDetails = [{userEmail, roomBooked, dateIn, dateOut}];
 
-             /*     Convert JSON, store      */
-             localStorage.setObject('userDetails', userDetails);
+            /*     Convert JSON, store      */
+            localStorage.setObject('userDetails', userDetails);
 
-             console.log("here is what went into system storage:");
-             console.log(localStorage.getObject('userDetails'));
-         }
+            console.log("here is what went into system storage:");
+            console.log(localStorage.getObject('userDetails'));
+        }
     }
 }
 
@@ -214,12 +218,12 @@ function displayCurrentBookings() {
                 `Rooms(${roomBookArray.length})`;
 
             //Iterate through JSON to output on screen
-            for (i = 0; i<roomBookArray.length; i++) {
+            for (i = 0; i < roomBookArray.length; i++) {
 
                 var br = document.createElement("br");
                 var hr = document.createElement("hr");
 
-                //Creating an element for each room
+                /*      Creating an element for each room   */
 
                 //Image for room
                 var roomImg = document.createElement("IMG");
@@ -235,10 +239,9 @@ function displayCurrentBookings() {
                 roomImg.setAttribute("height", "228");
                 roomImg.setAttribute("alt", "Room reservation image");
 
-
                 //What type of room
                 var paraType = document.createElement("P");
-                var type = document.createTextNode(`Room #${i+1} is a ${roomBookArray[i].roomBooked} room.`);
+                var type = document.createTextNode(`Room #${i + 1} is a ${roomBookArray[i].roomBooked} room.`);
                 //What dates
                 var paraDates = document.createElement("P");
                 var dates = document.createTextNode(`${roomBookArray[i].dateIn} - ${roomBookArray[i].dateOut}`);
@@ -268,27 +271,25 @@ function displayCurrentBookings() {
                 var deleteBooking = document.createElement("BUTTON");
                 var deleteBookingText = document.createTextNode("Cancel booking");
                 deleteBooking.appendChild(deleteBookingText);
-                deleteBooking.onclick = function() {deleteBookingByIndex(thisbooking)};
+                deleteBooking.onclick = function () {
+                    deleteBookingByIndex(thisbooking)
+                };
                 load.appendChild(deleteBooking);
 
                 //Change Date
                 var modifyBookingDate = document.createElement("BUTTON");
                 var modifyBookingDateText = document.createTextNode("Modify Dates");
                 modifyBookingDate.appendChild(modifyBookingDateText);
-                modifyBookingDate.onclick = function() {changeBookingDate(thisbooking)};
+                modifyBookingDate.onclick = function () {changeBookingDate(thisbooking)};
+
                 load.appendChild(modifyBookingDate);
-
-
                 load.appendChild(br);
                 load.appendChild(br);
 
                 //Divider between rooms, doesn't display on final room.
-                if ((i+1) != roomBookArray.length) {
+                if ((i + 1) != roomBookArray.length) {
                     load.appendChild(hr);
-                }
-            }
-
-        } else {
+                }}} else {
             document.getElementById("roomHeaderDisplay").innerText =
                 "Sorry, You have not booked any rooms with us.";
         }
