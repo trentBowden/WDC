@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Personal headers-->
+    <meta charset="UTF-8">
+    <meta name="description" content="WDC Part 2">
+    <meta name="keywords" content="HD 20/20 please">
+    <meta name="author" content="Bowden, Ruan, Hu">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel on Swanson</title>
+    <!--Includes (internal)-->
+    <link rel="stylesheet" href="main.css">
+    <!--Includes (external)-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css"
+          integrity="sha384-v2Tw72dyUXeU3y4aM2Y0tBJQkGfplr39mxZqlTBDUZAb9BGoC40+rdFCG0m10lXk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/fontawesome.css"
+          integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116530898-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-116530898-1');
+    </script>
+
+
+</head>
+<body>
+
+<header>
+    <div class = "footerName footerText">
+        <img src="images/logo.png" alt="Avatar" class="avatar">
+        <h1>Hotel on Swanson</h1>
+    </div>
+</header>
+
+<nav id="main">
+    <ul>
+        <li class="logo"><a href="index.html">
+            <img src="images/logo.png" alt="Avatar" class="avatar" width="30" height="30">
+        </a></li>
+        <li><a href="rooms.html">Rooms</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+    </ul>
+</nav>
+
+
+<div class="content">
+
+    <!--Giant One-Pointer -->
+    <div class = "horizontalStack large-tri-color">
+
+        <div class = "verticalStack content-text">
+
+            <div class = "textBrief" id = "map">
+                <h1>Rooms</h1>
+            </div>
+        </div>
+    </div>
+
+    <!--Three Point with Picture-->
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+
+            <div class = "textBrief">
+                <h1>Family Room</h1>
+            </div>
+
+            <div class = "textBrief">
+                <h2>Peace and Quiet</h2>
+                <p>
+                    Enjoy a relaxing post-buffet food coma without any stress of family worry. <br>
+                    Our rooms are large enough for the kids to watch tv, while you doze away.
+                </p>
+                <p>
+                    <button onclick="openBookingModalFamily()">Book this room</button>
+                </p>
+            </div>
+
+        </div>
+        <div class = "verticalStack content-picture">
+            <img src="images/room-1.png" alt = "room 1">
+        </div>
+    </div>
+
+    <br> <br> <br> <br>
+
+    <!--Three Point with Picture-->
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+
+            <div class = "textBrief">
+                <h1>Double Room</h1>
+            </div>
+
+            <div class = "textBrief">
+                <h2>Ready when you are</h2>
+                <p>
+                    This room is our most popular, seeing 68% of our customers. <br>
+                    Situated by the pool, it makes the perfect getaway for couples.
+                </p>
+            </div>
+
+            <div class = "textBrief">
+                <h2>Meals included</h2>
+                <p>
+                    Get free plating service, and 25% off all food ordered past 9pm.<br>
+                    Track all your spending through the website dashboard.
+                </p>
+                <p>
+                    <button onclick="openBookingModalDouble()">Book this room</button>
+                </p>
+                <p>
+                    <a href="dashboard.html">See the dashboard</a><br>
+                    <a href="sorry.html">Read the menu</a>
+                </p>
+
+            </div>
+
+        </div>
+        <div class = "verticalStack content-picture">
+            <img src="images/room-2.png" alt = "room 2">
+        </div>
+    </div>
+
+    <br> <br> <br> <br>
+
+    <!--Three Point with Picture-->
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+
+            <div class = "textBrief">
+                <h1>Single Room</h1>
+            </div>
+
+            <div class = "textBrief">
+                <h2>Look at you</h2>
+                <p>
+                    Stood up? literally nobody ever has had a layover in Adelaide, <br>
+                    so you're the only market we can target these rooms to.
+                </p>
+                <p>
+                    <button onclick="openBookingModalSingle()">Book this room</button>
+                </p>
+            </div>
+
+            <div class = "textBrief">
+                <h2>Sit down</h2>
+                <p>
+                    Let down your hair with free icecream and milo, straight from the tub 9-10pm. <br> <br>
+                    <a href="sorry">Pre-order a tub</a> <br>
+                    <a href="sorry">In-House matchmaking service</a>
+                </p>
+            </div>
+
+        </div>
+        <div class = "verticalStack content-picture">
+            <img src="images/room-3.png" alt = "room 3">
+        </div>
+    </div>
+
+
+</div>
+
+<br> <br> <br> <br>
+
+
+<!--Footer -->
+<div class = "horizontalStack dark-bg">
+
+    <div class = "verticalStack">
+
+        <div class = "footerName footerText">
+            <img src="images/logo.png" alt="Avatar" class="avatar">
+            <h1>Hotel on Swanson</h1>
+        </div>
+
+
+
+        <div class = "textBrief footerText white">
+            <p>Further contact:</p>
+            <ul>
+                <li><i class="fa fa-at"></i>
+                    <a href="sorry.html">Press</a>
+                </li>
+                <li><i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                    <a href="sorry.html">Legal</a>
+                </li>
+                <li><i class="fa fa-arrow-circle-right"></i>
+                    <a href="sorry.html">Privacy Policy</a>
+                </li>
+            </ul>
+        </div>
+
+            <div class = "textBrief footerText">
+                <p>
+                    For more information about booking <br>
+                    Your next wedding or corporate event, <br>
+                    Be sure to contact us via the links.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+
+
+<!--Modal for booking-->
+<!--Modal for booking-->
+
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>What date works for you?</h2>
+        </div>
+        <div class="modal-body" id = "dateInformation">
+            <p>Check in: <input id = "dateIn" type="date"></p>
+            <p>Check out: <input id = "dateOut" type="date"></p>
+            <button onclick="getUserBookingData()">Continue</button>
+        </div>
+
+        <div class="modal-body" id = "moreUserInformation">
+            <p id = "datesPreConfirmation">-</p>
+            <p>Please confirm your email address:</p>
+            <input id = "userBookingEmail" type="email" placeholder="yourname@example.com"> <br> <br>
+            <button onclick="confirmBooking()">Confirm</button>
+        </div>
+
+        <div class="modal-body" id = "userInformationTaken">
+            <p id = "emailConfirmed"></p>
+            <p>All Booked! Thank you. <br> You can manage this from your Dashboard </p>
+            <button onclick="window.location.href='dashboard.html'">View Dashboard</button>
+        </div>
+        <!--<div class="modal-footer">-->
+            <!--<h3>For more information, call 08-8338-1234</h3>-->
+        <!--</div>-->
+    </div>
+</div>
+
+<script src="scripts.js"></script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC83S-MiS1fHUNkO6DtXZlAUtAU3i7tW-0&callback=initMap">
+</script>
+</body>
+</html>
