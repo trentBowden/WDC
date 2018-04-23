@@ -309,43 +309,116 @@ var hotel3 = {lat:-34.932874, lng:138.600259};
 
 function initMap() {
 
+
+}
+
+function initAutocomplete() {
+    var companyLogo = 'images/hotel.png';
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 13,
         center: adelaide
     });
-    var marker = new google.maps.Marker({
+    /*
+        How to work these markers, what they need:
+        1. Marker
+        2. Content string for when marker is clicked
+        3. Setting up the info window
+        4. Adding the listener
+     */
+    var markerH1 = new google.maps.Marker({
         position: hotel1,
         map: map,
-        title: 'Hotel 1!'
+        title: 'Hotel 1!',
+        icon: companyLogo
     });
+    var contentStringH1 = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h3 id="firstHeading" class="firstHeading">Hutt St</h3>'+
+        '<div id="bodyContent">'+
+        '<p><b>Hutt St</b>, Is one of the finest places to stay in Adelaide.</p>' +
+        '<p>4 Rooms Available, book now to ensure your stay</p>'+
+        '</div>'+
+        '</div>';
+
+    var infowindowH1 = new google.maps.InfoWindow({
+        content: contentStringH1
+    });
+
+    markerH1.addListener('click', function() {
+        infowindowH1.open(map, markerH1);
+    });
+
+
     var markerH2 = new google.maps.Marker({
         position: hotel2,
         map: map,
-        title: 'Hotel 2!'
+        title: 'Hotel 2!',
+        icon: companyLogo
     });
     var markerH3 = new google.maps.Marker({
         position: hotel3,
         map: map,
-        title: 'Hotel 3!'
+        title: 'Hotel 3!',
+        icon: companyLogo
     });
-}
 
-function showHotel(x) {
-    switch (x) {
-        case 1:
-            map.panTo(hotel1);
-            map.setZoom(15);
-            break;
-        case 2:
-            map.panTo(hotel2);
-            map.setZoom(15);
-            break;
-        case 3:
-            map.panTo(hotel3);
-            map.setZoom(15);
-            break;
-        default:
-            console.log("ShowHotel function called with incorrect value");
-            break;
-    }
+    // Create the search box and link it to the UI element.
+    var input = document.getElementById('pac-input');
+    var searchBox = new google.maps.places.SearchBox(input);
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    // Bias the SearchBox results towards current map's viewport.
+    map.addListener('bounds_changed', function() {
+        searchBox.setBounds(map.getBounds());
+    });
+
+    var markers = [];
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener('places_changed', function() {
+        var places = searchBox.getPlaces();
+
+        if (places.length == 0) {
+            return;
+        }
+
+        // Clear out the old markers.
+        markers.forEach(function(marker) {
+            marker.setMap(null);
+        });
+        markers = [];
+
+        // For each place, get the icon, name and location.
+        var bounds = new google.maps.LatLngBounds();
+        places.forEach(function(place) {
+            if (!place.geometry) {
+                console.log("Returned place contains no geometry");
+                return;
+            }
+            var icon = {
+                url: place.icon,
+                size: new google.maps.Size(71, 71),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(17, 34),
+                scaledSize: new google.maps.Size(25, 25)
+            };
+
+            // Create a marker for each place.
+            markers.push(new google.maps.Marker({
+                map: map,
+                icon: icon,
+                title: place.name,
+                position: place.geometry.location
+            }));
+
+            if (place.geometry.viewport) {
+                // Only geocodes have viewport.
+                bounds.union(place.geometry.viewport);
+            } else {
+                bounds.extend(place.geometry.location);
+            }
+        });
+        map.fitBounds(bounds);
+    });
 }
