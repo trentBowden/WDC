@@ -302,35 +302,47 @@ function displayCurrentBookings() {
  */
 
 var map;
+var adelaide = {lat: -34.9210, lng: 138.6062};
+var hotel1 = {lat:-34.925696, lng:138.599658};
+var hotel2 = {lat:-34.930341, lng:138.612103};
+var hotel3 = {lat:-34.932874, lng:138.600259};
+
 function initMap() {
-    var hotel = {lat: -34.9210, lng: 138.6062};
+
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 20,
-        center: hotel
+        zoom: 13,
+        center: adelaide
     });
     var marker = new google.maps.Marker({
-        position: hotel,
-        map: map
+        position: hotel1,
+        map: map,
+        title: 'Hotel 1!'
+    });
+    var markerH2 = new google.maps.Marker({
+        position: hotel2,
+        map: map,
+        title: 'Hotel 2!'
+    });
+    var markerH3 = new google.maps.Marker({
+        position: hotel3,
+        map: map,
+        title: 'Hotel 3!'
     });
 }
 
 function showHotel(x) {
-    var hotel1 = new google.maps.LatLng(-34.925696, 138.599658);
-    var hotel2 = new google.maps.LatLng(-34.930341, 138.612103);
-    var hotel3 = new google.maps.LatLng(-34.932874, 138.600259);
-
     switch (x) {
         case 1:
             map.panTo(hotel1);
-            map.setZoom(10);
+            map.setZoom(15);
             break;
         case 2:
             map.panTo(hotel2);
-            map.setZoom(10);
+            map.setZoom(15);
             break;
         case 3:
             map.panTo(hotel3);
-            map.setZoom(10);
+            map.setZoom(15);
             break;
         default:
             console.log("ShowHotel function called with incorrect value");

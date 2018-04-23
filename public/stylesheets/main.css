@@ -441,3 +441,13 @@ button {
 #userInformationTaken {
     display: none;
 }
+
+
+/*
+    Map Content
+ */
+
+#map {
+    width: 100%;
+    height: 300px;
+}
