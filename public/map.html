@@ -57,27 +57,19 @@
 
     <!--Giant One-Pointer -->
     <div class = "horizontalStack large-tri-color">
-
         <div class = "verticalStack content-text">
-
             <div class = "textBrief">
-                <h1>Dashboard</h1>
+                <h1>Our Hotels</h1>
             </div>
         </div>
     </div>
 
-    <!--Three Point with Picture-->
-    <div class = "horizontalStack light-bg">
-        <div class = "verticalStack content-text">
-            <div class = "textBrief" id = "loadRoomsHere">
-                <h1 id = "roomHeaderDisplay">Loading..</h1>
-
-            </div>
-        </div>
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <div class = "horizontalStack light-bg" id = "map">
+        <!--Display the map!-->
     </div>
 
 </div>
-
 
 <br> <br> <br> <br>
 
@@ -91,8 +83,6 @@
             <img src="images/logo.png" alt="Avatar" class="avatar">
             <h1>Hotel on Swanson</h1>
         </div>
-
-
 
         <div class = "textBrief footerText white">
             <p>Further contact:</p>
@@ -119,10 +109,9 @@
 
         </div>
     </div>
-
 <script src="javascripts/scripts.js"></script>
-<script>
-    displayCurrentBookings();
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC83S-MiS1fHUNkO6DtXZlAUtAU3i7tW-0&callback=initAutocomplete&libraries=places">
 </script>
 </body>
 </html>
