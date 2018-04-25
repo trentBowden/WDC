@@ -334,9 +334,9 @@ function initAutocomplete() {
     var contentStringH1 = '<div id="content">'+
         '<div id="siteNotice">'+
         '</div>'+
-        '<h3 id="firstHeading" class="firstHeading">Hutt St</h3>'+
+        '<h3 id="firstHeading" class="firstHeading">Town Hall</h3>'+
         '<div id="bodyContent">'+
-        '<p><b>Hutt St</b>, Is one of the finest places to stay in Adelaide.</p>' +
+        '<p><b>Town Hall</b>, Is one of the finest places to stay in Adelaide.</p>' +
         '<p>4 Rooms Available, book now to ensure your stay</p>'+
         '</div>'+
         '</div>';
@@ -356,11 +356,48 @@ function initAutocomplete() {
         title: 'Hotel 2!',
         icon: companyLogo
     });
+
+    var contentStringH2 = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h3 id="firstHeading" class="firstHeading">Hutt St</h3>'+
+        '<div id="bodyContent">'+
+        '<p><b>A fan of the races?</b>This is your best accomodation for East end activities</p>' +
+        '<p>9 Rooms Available, book now to ensure your stay for the Adelaide 500!</p>'+
+        '</div>'+
+        '</div>';
+
+    var infowindowH2 = new google.maps.InfoWindow({
+        content: contentStringH2
+    });
+
+    markerH2.addListener('click', function() {
+        infowindowH2.open(map, markerH2);
+    });
+
     var markerH3 = new google.maps.Marker({
         position: hotel3,
         map: map,
         title: 'Hotel 3!',
         icon: companyLogo
+    });
+
+    var contentStringH3 = '<div id="content">'+
+        '<div id="siteNotice">'+
+        '</div>'+
+        '<h3 id="firstHeading" class="firstHeading">Market Galore</h3>'+
+        '<div id="bodyContent">'+
+        '<p><b>Ready to hit the markets?</b>Close to Gilles st markets, and central markets!</p>' +
+        '<p>2 Rooms Available, book now to ensure your stay!</p>'+
+        '</div>'+
+        '</div>';
+
+    var infowindowH3 = new google.maps.InfoWindow({
+        content: contentStringH3
+    });
+
+    markerH3.addListener('click', function() {
+        infowindowH3.open(map, markerH3);
     });
 
     // Create the search box and link it to the UI element.
