@@ -1,4 +1,21 @@
 /*
+    Login strip
+ */
+
+#loginStrip {
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+#usernameInput #passwordInput{
+    border: 2px solid red;
+    border-radius: 4px;
+    background-color: black;
+}
+
+
+/*
     Overwriting existing structures
 */
 

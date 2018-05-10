@@ -7,6 +7,7 @@
     <meta name="keywords" content="HD 20/20 please">
     <meta name="author" content="Bowden, Ruan, Hu">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="477510919126-8hhoh84l9i0ia1udcjmrgqskf2j3u5rl.apps.googleusercontent.com">
     <title>Hotel on Swanson</title>
     <!--Includes (internal)-->
     <link rel="stylesheet" href="stylesheets/main.css">
@@ -17,6 +18,8 @@
           integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    <!--Google sign in stuff (to be on every page)-->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116530898-1"></script>
@@ -32,11 +35,24 @@
 <body>
 
 <header>
+    <br>
     <div class = "footerName footerText">
-        <img src="images/logo.png" alt="Avatar" class="avatar">
-        <h1>Hotel on Swanson</h1>
+        <div id = "loginStrip">
+            <form id = "loginUP">
+                <input type="text" id = "usernameInput" placeholder="Username" autocomplete="username"> <br>
+                <input type="password" id = "passwordInput" placeholder="password" autocomplete="current-password"> <br>
+                <button onclick="loginWithUP()">Login</button> <br>
+            </form>
+            <div id = "pageLog"></div>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <button id = "signOutButton" href="#" onclick="signOut();">Sign out</button>
+        </div>
+        <img id = "logoTop" src="images/logo.png" alt="Avatar" class="avatar">
+        <h1>Hotel <br> on Swanson</h1>
     </div>
 </header>
+
+
 
 <nav id="main">
     <ul>
@@ -49,6 +65,8 @@
         <li><a href="map.html">Map</a></li>
     </ul>
 </nav>
+
+
 
 <div class="content" id = "Home">
 
@@ -204,5 +222,9 @@
 
 
 <script src="javascripts/scripts.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
 </body>
 </html>

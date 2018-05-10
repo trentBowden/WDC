@@ -19,6 +19,7 @@ function showID(element) {
 
 */
 
+
 const nav = document.querySelector('#main');
 let topOfNav = nav.offsetTop;
 
@@ -124,6 +125,7 @@ Storage.prototype.getObject = function (key) {
 };
 
 function book() {
+    //TODO here is where we need to adapt for AJAX calls to the server, instead of local storage
     if (typeof(Storage) === "undefined") {
         alert("Sorry! No web storage available in your browser!");
     } else {
@@ -173,7 +175,7 @@ function book() {
 
 function deleteBookingByIndex(indexInput) {
     //Getting the details
-    var roomBookArray = localStorage.getObject('userDetails');
+    var roomBookArray = localStorage.getObject('userDetails'); //TODO get from AJAX
     if (indexInput > -1) {
         roomBookArray.splice(indexInput, 1);
     }
@@ -185,7 +187,7 @@ function deleteBookingByIndex(indexInput) {
 
 function changeBookingDate(indexInput) {
     //Getting the details
-    var roomBookArray = localStorage.getObject('userDetails');
+    var roomBookArray = localStorage.getObject('userDetails'); //TODO get from AJAX
     //Retrieving user requests
     var checkInDateChange = prompt("New CheckIn date (Y-M-D):\nExisting value shown below", roomBookArray[indexInput].dateIn);
     var checkOutDateChange = prompt("New CheckOut date (Y-M-D):\nExisting value shown below", roomBookArray[indexInput].dateOut);
@@ -207,7 +209,7 @@ function displayCurrentBookings() {
         //If the user has not booked with us before this session
         if (sessionStorage.getItem("bookedBefore") == "yes") {
 
-            //Getting the details
+            //Getting the details, let's do this by AJAX call TODO
             var roomBookArray = localStorage.getObject('userDetails');
 
             console.log("Local storage values:");
@@ -458,4 +460,66 @@ function initAutocomplete() {
         });
         map.fitBounds(bounds);
     });
+}
+
+/* Login stuff */
+
+document.getElementById("signOutButton").style.display = "none";
+
+function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+    //Change the image on top + display "sign out" button
+    document.getElementById("signOutButton").style.display = "block";
+    document.getElementById("logoTop").src = profile.getImageUrl();
+    document.getElementById("loginUP").style.display = "none";
+
+    //ID token to pass to the back end
+    var id_token = googleUser.getAuthResponse().id_token;
+    console.log("ID Token: " + id_token);
+
+    getUserInfo({userID: profile.getId()});
+
+}
+
+function showOnPage(x) {
+    document.getElementById("pageLog").innerText = x;
+}
+
+function loginWithUP() {
+    var toSend = {
+        username: document.getElementById('usernameInput').value,
+        password: document.getElementById('passwordInput').value
+    };
+    console.log(toSend);
+    getUserInfo(toSend);
+
+}
+
+function getUserInfo(params) {
+
+    $.post( "user.json", params, function( data ) {
+        if (data.username != null) {
+            alert( "Welcome back, " + data.username );
+        } else {
+            alert( "You're now signed in through Google.");
+        }
+
+    }, "json");
+
+
+}
+
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+    document.getElementById("signOutButton").style.display = "none";
+    document.getElementById("logoTop").src = "images/logo.png";
+    document.getElementById("loginUP").style.display = "block";
 }
