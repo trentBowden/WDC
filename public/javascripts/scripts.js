@@ -1,3 +1,6 @@
+//google user data (hopefully will be updated when they sign in)
+var gUsrData;
+
 /*
 
 
@@ -125,44 +128,26 @@ Storage.prototype.getObject = function (key) {
 };
 
 function book() {
-    //TODO here is where we need to adapt for AJAX calls to the server, instead of local storage
-    if (typeof(Storage) === "undefined") {
-        alert("Sorry! No web storage available in your browser!");
-    } else {
-
         //Data for this booking:
         var userEmail = document.getElementById("userBookingEmail").value;
         var roomBooked = room;
         var dateIn = document.getElementById("dateIn").value;
         var dateOut = document.getElementById("dateOut").value;
 
-        //If the user has booked with us before this session
-        if (sessionStorage.getItem("bookedBefore") == "yes") {
-
-            //The user HAS booked before, retrieve old data
-            var userData = localStorage.getObject('userDetails');
-            console.log(userData);
-
-            //Pushing new data to the array, setting it to system
-            userData.push({userEmail, roomBooked, dateIn, dateOut});
-            localStorage.setObject('userDetails', userData);
-
-            console.log("User HAS booked before, updated details:");
-            console.log(localStorage.getObject('userDetails'));
-        } else {
-
-            console.log("User has NOT booked before, new details");
-            sessionStorage.setItem("bookedBefore", "yes");
-
-            /*     ES6 Property value shorthand array creation     */
-            var userDetails = [{userEmail, roomBooked, dateIn, dateOut}];
-
-            /*     Convert JSON, store      */
-            localStorage.setObject('userDetails', userDetails);
-
-            console.log("here is what went into system storage:");
-            console.log(localStorage.getObject('userDetails'));
-        }
+        //Check to see if logged in:
+    if (gUsrData != null) {
+        console.log("Sending your booking..");
+        $.post( "/newbooking",
+            {userID: gUsrData.getBasicProfile().getId(),
+            userEmail: userEmail,
+            roomBooked: roomBooked,
+            dateIn: dateIn,
+            dateOut: dateOut
+            }, function( data ) {
+            alert(data.bookingStatus);
+        }, "json");
+    } else {
+        alert("Sorry, you don't seem to be logged in..");
     }
 }
 
@@ -201,16 +186,21 @@ function changeBookingDate(indexInput) {
 
 function displayCurrentBookings() {
 
-    console.log("cool");
+    console.log("-------------Display Current Bookings--------------");
 
-    if (typeof(Storage) === "undefined") {
-        alert("Sorry! No web storage available in your browser!");
-    } else {
-        //If the user has not booked with us before this session
-        if (sessionStorage.getItem("bookedBefore") == "yes") {
+
+
+    document.getElementById("roomHeaderDisplay").innerText =
+        "Sorry, You have not booked any rooms with us.";
+
+    alert(userLoggedIn());
+
+    if (userLoggedIn()) {
+        console.log("Checking your details accross our booking data");
+        $.post( "bookings.json",  {userID: gUsrData.getBasicProfile().getId()}, function( data ) {
 
             //Getting the details, let's do this by AJAX call TODO
-            var roomBookArray = localStorage.getObject('userDetails');
+            var roomBookArray = data;
 
             console.log("Local storage values:");
             console.log(roomBookArray);
@@ -291,11 +281,10 @@ function displayCurrentBookings() {
                 //Divider between rooms, doesn't display on final room.
                 if ((i + 1) != roomBookArray.length) {
                     load.appendChild(hr);
-                }}} else {
-            document.getElementById("roomHeaderDisplay").innerText =
-                "Sorry, You have not booked any rooms with us.";
+                }
         }
-    }
+    });
+}
 }
 
 
@@ -466,7 +455,9 @@ function initAutocomplete() {
 
 document.getElementById("signOutButton").style.display = "none";
 
+
 function onSignIn(googleUser) {
+    gUsrData = googleUser;
     var profile = googleUser.getBasicProfile();
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
@@ -480,10 +471,10 @@ function onSignIn(googleUser) {
 
     //ID token to pass to the back end
     var id_token = googleUser.getAuthResponse().id_token;
-    console.log("ID Token: " + id_token);
+    // console.log("ID Token: " + id_token);
 
     getUserInfo({userID: profile.getId()});
-
+    displayCurrentBookings();
 }
 
 function showOnPage(x) {
@@ -504,9 +495,9 @@ function getUserInfo(params) {
 
     $.post( "user.json", params, function( data ) {
         if (data.username != null) {
-            alert( "Welcome back, " + data.username );
+            console.log( "Welcome back, " + data.username );
         } else {
-            alert( "You're now signed in through Google.");
+            console.log( "You're now signed in through Google.");
         }
 
     }, "json");
@@ -522,4 +513,14 @@ function signOut() {
     document.getElementById("signOutButton").style.display = "none";
     document.getElementById("logoTop").src = "images/logo.png";
     document.getElementById("loginUP").style.display = "block";
+}
+
+function userLoggedIn() {
+    var auth2 = gapi.auth2.getAuthInstance();
+    console.log("about to check sign in");
+    if (auth2.isSignedIn.get()) {
+        return true;
+    } else {
+        return false;
+    }
 }
