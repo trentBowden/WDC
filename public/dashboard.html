@@ -25,9 +25,12 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'UA-116530898-1');
     </script>
+    <script>
+        var pageTitle = "dashboard";
+    </script>
+
 
 
 </head>
@@ -80,9 +83,10 @@
     <!--Three Point with Picture-->
     <div class = "horizontalStack light-bg">
         <div class = "verticalStack content-text">
-            <div class = "textBrief" id = "loadRoomsHere">
+            <div class = "textBrief">
                 <h1 id = "roomHeaderDisplay">Loading..</h1>
-
+                <div id = "loadRoomsHere">
+                </div>
             </div>
         </div>
     </div>
