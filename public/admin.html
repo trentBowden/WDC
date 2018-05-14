@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Personal headers-->
+    <meta charset="UTF-8">
+    <meta name="description" content="WDC Part 4">
+    <meta name="keywords" content="HD 20/20 please">
+    <meta name="author" content="Bowden, Ruan, Hu">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="477510919126-8hhoh84l9i0ia1udcjmrgqskf2j3u5rl.apps.googleusercontent.com">
+    <title>Hotel on Swanson</title>
+    <!--Includes (internal)-->
+    <link rel="stylesheet" href="stylesheets/main.css">
+    <!--Includes (external)-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css"
+          integrity="sha384-v2Tw72dyUXeU3y4aM2Y0tBJQkGfplr39mxZqlTBDUZAb9BGoC40+rdFCG0m10lXk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/fontawesome.css"
+          integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116530898-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-116530898-1');
+    </script>
+    <script>
+        var pageTitle = "admin";
+    </script>
+
+
+
+</head>
+<body>
+
+<header>
+    <br>
+    <div class = "footerName footerText">
+        <div id = "loginStrip">
+            <form id = "loginUP">
+                <input type="text" id = "usernameInput" placeholder="Username" autocomplete="username"> <br>
+                <input type="password" id = "passwordInput" placeholder="password" autocomplete="current-password"> <br>
+                <button onclick="loginWithUP()">Login</button> <br>
+            </form>
+            <div id = "pageLog"></div>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <button id = "signOutButton" href="#" onclick="signOut();">Sign out</button>
+        </div>
+        <img id = "logoTop" src="images/logo.png" alt="Avatar" class="avatar">
+        <h1>Hotel <br> on Swanson</h1>
+    </div>
+</header>
+
+<nav id="main">
+    <ul>
+        <li class="logo"><a href="index.html">
+            <img src="images/logo.png" alt="Avatar" class="avatar" width="30" height="30">
+        </a></li>
+        <li><a href="rooms.html">Rooms</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="map.html">Map</a></li>
+    </ul>
+</nav>
+
+
+<div class="content">
+
+    <!--Giant One-Pointer -->
+    <div class = "horizontalStack large-tri-color">
+
+        <div class = "verticalStack content-text">
+
+            <div class = "textBrief">
+                <h1>Admin Area</h1>
+            </div>
+        </div>
+    </div>
+
+    <!--Three Point with Picture-->
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+            <div class = "textBrief">
+                <h1 id = "roomHeaderDisplay">Loading..</h1>
+                <div id = "loadAdminDataHere">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<br> <br> <br> <br>
+
+
+<!--Footer -->
+<div class = "horizontalStack dark-bg">
+
+    <div class = "verticalStack">
+
+        <div class = "footerName footerText">
+            <img src="images/logo.png" alt="Avatar" class="avatar">
+            <h1>Hotel on Swanson</h1>
+        </div>
+
+
+
+        <div class = "textBrief footerText white">
+            <p>Further contact:</p>
+            <ul>
+                <li><i class="fa fa-at"></i>
+                    <a href="sorry.html">Press</a>
+                </li>
+                <li><i class="fa fa-arrow-circle-right" aria-hidden="true"></i>
+                    <a href="sorry.html">Legal</a>
+                </li>
+                <li><i class="fa fa-arrow-circle-right"></i>
+                    <a href="sorry.html">Privacy Policy</a>
+                </li>
+            </ul>
+        </div>
+
+            <div class = "textBrief footerText">
+                <p>
+                    For more information about booking <br>
+                    Your next wedding or corporate event, <br>
+                    Be sure to contact us via the links.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+<!--Google sign in stuff (to be on every page)-->
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous">
+
+</script>
+<script src="javascripts/scripts.js"></script>
+<script>
+    // Listen for sign-in state changes.
+    // displayCurrentBookings();
+    // displayCurrentBookings();
+</script>
+</body>
+</html>

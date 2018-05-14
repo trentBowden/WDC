@@ -152,6 +152,16 @@ function book() {
     }
 }
 
+function sendReview(room, username, userID, reviewText, stars) {
+    $.post("/reviews.json",
+        {room, username, userID, reviewText, stars},
+        function (data, status) {
+            //alert(status);
+        }, "json");
+
+    alert("Thank you for your review");
+}
+
 
 /*
 
@@ -189,11 +199,157 @@ function changeBookingDate(indexInput) {
     location.reload();
 }
 
+function displayAdminData() {
+    if (userLoggedIn()) {
+
+        //At first, clear everything
+        var load = document.getElementById("loadAdminDataHere");
+        load.innerHTML = ""; //clear before adding everything
+
+        $.get("/reviews.json", function (data, status) {
+            //TODO anyone can get into admin because if we restricted it then it could not be marked!
+            //Getting the details, let's do this by AJAX call TODO
+            var reviewData = data;
+            console.log("Retrieved all reviews from server");
+
+            console.log(reviewData);
+
+            if (reviewData.length < 1) {
+
+                document.getElementById("roomHeaderDisplay").innerText =
+                    "Nobody has reviewed yet";
+
+            } else {
+
+                //Updating the page header
+                document.getElementById("roomHeaderDisplay").innerText =
+                    `Reviews(${reviewData.length})`;
+
+                var load = document.getElementById("loadAdminDataHere");
+                load.innerHTML = ""; //clear before adding everything
+
+                //Iterate through JSON to output on screen
+                for (var i = 0; i < reviewData.length; i++) {
+                    (
+                        function() {
+
+                            var br = document.createElement("br");
+                            var hr = document.createElement("hr");
+
+                            /*      Creating an element for each review   */
+
+                            //What type of room
+                            var paraType = document.createElement("P");
+                            var type = document.createTextNode(`Review #${i + 1} is for: ${reviewData[i].room} room.`);
+                            //Who reviewed
+                            var paraWhoReviewed = document.createElement("P");
+                            var whoReviewed = document.createTextNode(`Reviewed by ${reviewData[i].userReviewing}`);
+                            //Review Text
+                            var paraRevText = document.createElement("P");
+                            var revText = document.createTextNode(`"${reviewData[i].reviewText}"`);
+
+                            //Placing sections into room element, appending to page
+                            paraType.appendChild(type);
+                            paraWhoReviewed.appendChild(whoReviewed);
+                            paraRevText.appendChild(revText);
+
+                            var load = document.getElementById("loadAdminDataHere");
+                            load.appendChild(paraType);
+                            load.appendChild(paraWhoReviewed);
+                            load.appendChild(paraRevText);
+                            load.appendChild(br);
+                            load.appendChild(br);
+                            //Divider between rooms, doesn't display on final room.
+                            if ((i + 1) != reviewData.length) {
+                                load.appendChild(hr);
+                            }
+                        }
+                    )();
+                }
+            }
+        });
+
+
+        $.get("/allBookings.json", function (data, status) {
+            //TODO anyone can get into admin because if we restricted it then it could not be marked!
+            var allUsrBookingData = data;
+            console.log("Retrieved all bookings from server");
+            console.log(allUsrBookingData);
+            var bookingsHeader = document.createElement("h1");
+            var load = document.getElementById("loadAdminDataHere");
+
+
+            if (allUsrBookingData.length < 1) {
+                var nobodyBooked = document.createTextNode(`Nobody has booked yet`);
+                bookingsHeader.appendChild(nobodyBooked);
+                load.appendChild(bookingsHeader);
+
+            } else {
+
+                var bookingsHeaderTxt = document.createTextNode(`Bookings:`);
+                bookingsHeader.appendChild(bookingsHeaderTxt);
+                load.appendChild(bookingsHeader);
+
+                //Iterate through JSON which shows first USERS / Their Bookings
+                for (var i = 0; i < allUsrBookingData.length; i++) {
+                    for (var j = 0; j < allUsrBookingData[i].length; j++) {
+
+                    (
+                        function() {
+
+                            var br = document.createElement("br");
+                            var hr = document.createElement("hr");
+
+                            /*      Creating an element for each review   */
+
+                            //What type of room
+                            var paraType = document.createElement("P");
+                            var type = document.createTextNode(`${allUsrBookingData[i][j].roomBooked} room.`);
+                            //Who Booked
+                            var paraWhoBooked = document.createElement("P");
+                            var whoBooked = document.createTextNode(`Booked by ${allUsrBookingData[i][j].userEmail}`);
+                            //Review Text
+                            var paraDates = document.createElement("P");
+                            var datesTxt = document.createTextNode(`${allUsrBookingData[i][j].dateIn} until ${allUsrBookingData[i][j].dateOut}`);
+
+                            //Placing sections into room element, appending to page
+                            paraType.appendChild(type);
+                            paraWhoBooked.appendChild(whoBooked);
+                            paraDates.appendChild(datesTxt);
+
+                            var load = document.getElementById("loadAdminDataHere");
+                            load.appendChild(paraType);
+                            load.appendChild(paraWhoBooked);
+                            load.appendChild(paraDates);
+                            load.appendChild(br);
+                            load.appendChild(br);
+                            //Divider between rooms, doesn't display on final room.
+                            // if ((i + 1) != allUsrBookingData.length) {
+                            //     load.appendChild(hr);
+                            // }
+                        }
+                    )();
+
+                    }
+                }
+            }
+        });
+    } else {
+        document.getElementById("roomHeaderDisplay").innerText =
+            "Sorry, You need to log in to view this page!";
+    }
+}
+
 function displayCurrentBookings() {
 
     console.log("-------------Display Current Bookings--------------");
 
     if (userLoggedIn()) {
+
+        //At first, clear everything
+        var load = document.getElementById("loadRoomsHere");
+        load.innerHTML = ""; //clear before adding everything
+
         $.post("bookings.json", {userID: gUsrData.getBasicProfile().getId()}, function (data) {
 
             //Getting the details, let's do this by AJAX call TODO
@@ -220,79 +376,116 @@ function displayCurrentBookings() {
                 //Iterate through JSON to output on screen
                 for (i = 0; i < roomBookArray.length; i++) {
 
-                    var br = document.createElement("br");
-                    var hr = document.createElement("hr");
 
-                    /*      Creating an element for each room   */
+                    (
 
-                    //Image for room
-                    var roomImg = document.createElement("IMG");
-                    if (roomBookArray[i].roomBooked == "family") {
-                        roomImg.setAttribute("src", "images/room-1.png");
-                    } else if (roomBookArray[i].roomBooked == "double") {
-                        roomImg.setAttribute("src", "images/room-2.png");
-                    } else if (roomBookArray[i].roomBooked == "single") {
-                        roomImg.setAttribute("src", "images/room-3.png");
-                    }
+                        function() {
 
-                    roomImg.setAttribute("width", "304");
-                    roomImg.setAttribute("height", "228");
-                    roomImg.setAttribute("alt", "Room reservation image");
+                            var br = document.createElement("br");
+                            var hr = document.createElement("hr");
 
-                    //What type of room
-                    var paraType = document.createElement("P");
-                    var type = document.createTextNode(`Room #${i + 1} is a ${roomBookArray[i].roomBooked} room.`);
-                    //What dates
-                    var paraDates = document.createElement("P");
-                    var dates = document.createTextNode(`${roomBookArray[i].dateIn} - ${roomBookArray[i].dateOut}`);
-                    //Who confirmed
-                    var paraConfirmed = document.createElement("P");
-                    var confirmed = document.createTextNode(`Confirmation email sent to ${roomBookArray[i].userEmail}`);
+                            /*      Creating an element for each room   */
 
-                    //Placing sections into room element, appending to page
-                    paraType.appendChild(type);
-                    paraDates.appendChild(dates);
-                    paraConfirmed.appendChild(confirmed);
+                            //Image for room
+                            var roomImg = document.createElement("IMG");
+                            if (roomBookArray[i].roomBooked == "family") {
+                                roomImg.setAttribute("src", "images/room-1.png");
+                            } else if (roomBookArray[i].roomBooked == "double") {
+                                roomImg.setAttribute("src", "images/room-2.png");
+                            } else if (roomBookArray[i].roomBooked == "single") {
+                                roomImg.setAttribute("src", "images/room-3.png");
+                            }
 
-                    var load = document.getElementById("loadRoomsHere");
-                    load.appendChild(roomImg);
-                    load.appendChild(paraType);
-                    load.appendChild(paraDates);
-                    load.appendChild(paraConfirmed);
-                    load.appendChild(br);
+                            roomImg.setAttribute("width", "304");
+                            roomImg.setAttribute("height", "228");
+                            roomImg.setAttribute("alt", "Room reservation image");
 
-                    /*
-                            Options to modify the booking,
-                            -based on the ith position in the array
-                     */
-                    var thisbooking = i;
+                            //What type of room
+                            var paraType = document.createElement("P");
+                            var type = document.createTextNode(`Room #${i + 1} is a ${roomBookArray[i].roomBooked} room.`);
+                            //What dates
+                            var paraDates = document.createElement("P");
+                            var dates = document.createTextNode(`${roomBookArray[i].dateIn} - ${roomBookArray[i].dateOut}`);
+                            //Who confirmed
+                            var paraConfirmed = document.createElement("P");
+                            var confirmed = document.createTextNode(`Confirmation email sent to ${roomBookArray[i].userEmail}`);
 
-                    //Delete
-                    var deleteBooking = document.createElement("BUTTON");
-                    var deleteBookingText = document.createTextNode("Cancel booking");
-                    deleteBooking.appendChild(deleteBookingText);
-                    console.log("deleteBookingButton made for " + thisbooking);
-                    deleteBooking.onclick = function () {
-                        deleteBookingByIndex(thisbooking);
-                    };
-                    load.appendChild(deleteBooking);
+                            //Placing sections into room element, appending to page
+                            paraType.appendChild(type);
+                            paraDates.appendChild(dates);
+                            paraConfirmed.appendChild(confirmed);
 
-                    //Change Date
-                    var modifyBookingDate = document.createElement("BUTTON");
-                    var modifyBookingDateText = document.createTextNode("Modify Dates");
-                    modifyBookingDate.appendChild(modifyBookingDateText);
-                    modifyBookingDate.onclick = function () {
-                        changeBookingDate(thisbooking)
-                    };
+                            var load = document.getElementById("loadRoomsHere");
+                            load.appendChild(roomImg);
+                            load.appendChild(paraType);
+                            load.appendChild(paraDates);
+                            load.appendChild(paraConfirmed);
+                            load.appendChild(br);
 
-                    load.appendChild(modifyBookingDate);
-                    load.appendChild(br);
-                    load.appendChild(br);
+                            /*
+                                    Options to modify the booking,
+                                    -based on the ith position in the array
+                             */
+                            var thisbooking = i;
 
-                    //Divider between rooms, doesn't display on final room.
-                    if ((i + 1) != roomBookArray.length) {
-                        load.appendChild(hr);
-                    }
+                            //Delete
+                            var deleteBooking = document.createElement("BUTTON");
+                            var deleteBookingText = document.createTextNode("Cancel booking");
+                            deleteBooking.appendChild(deleteBookingText);
+                            console.log("deleteBookingButton made for " + thisbooking);
+                            deleteBooking.onclick = function () {
+                                deleteBookingByIndex(thisbooking);
+                            };
+                            load.appendChild(deleteBooking);
+
+                            //Change Date
+                            var modifyBookingDate = document.createElement("BUTTON");
+                            var modifyBookingDateText = document.createTextNode("Modify Dates");
+                            modifyBookingDate.appendChild(modifyBookingDateText);
+                            modifyBookingDate.onclick = function () {
+                                changeBookingDate(thisbooking)
+                            };
+
+                            load.appendChild(modifyBookingDate);
+                            load.appendChild(br);
+                            load.appendChild(br);
+
+
+
+                            //SendRandomBooking
+                            var revText = document.createElement("TEXTAREA");
+                            var revTextPlaceholder = document.createTextNode(
+                                "Please type your review for the " + roomBookArray[i].roomBooked + " room");
+                            revText.appendChild(revTextPlaceholder);
+                            var revTextID = "reviewTextBox"+i;
+                            revText.id = revTextID;
+                            load.appendChild(revText);
+
+                            var sendReviewButton = document.createElement("BUTTON");
+                            var sendReviewBtnTxt = document.createTextNode("Send Review");
+                            sendReviewButton.appendChild(sendReviewBtnTxt);
+
+                            var currentRoom = roomBookArray[i].roomBooked;
+
+                            sendReviewButton.onclick = function() {
+                                sendReview(
+                                    currentRoom,
+                                    null,
+                                    gUsrData.getBasicProfile().getId(),
+                                    document.getElementById(revTextID).value,
+                                    1);
+                            };
+                            load.appendChild(sendReviewButton);
+
+                            load.appendChild(br);
+
+                            //Divider between rooms, doesn't display on final room.
+                            if ((i + 1) != roomBookArray.length) {
+                                load.appendChild(hr);
+                            }
+
+                        }
+                    )();
                 }
             }
         });
@@ -493,6 +686,12 @@ function onSignIn(googleUser) {
     if (pageTitle === "dashboard") {
         displayCurrentBookings();
     }
+    if (pageTitle === "admin") {
+        displayAdminData();
+    }
+    //This will add them as a new user if they aren't already
+    $.post("newUser.json", {userID: gUsrData.getBasicProfile().getId()});
+
 
 }
 
@@ -543,3 +742,5 @@ function userLoggedIn() {
         return false;
     }
 }
+
+

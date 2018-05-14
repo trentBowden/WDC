@@ -18,6 +18,94 @@ const oauth2Client = new google.auth.OAuth2(
 );
 google.options({auth: oauth2Client});
 
+let reviews = [
+    {
+        room: "Double",
+        userReviewing: "Trent",
+        reviewText: "This was great I loved it",
+        stars: 5
+
+    },
+    {
+        room: "Family",
+        userReviewing: "Cindy",
+        reviewText: "This was great we loved it",
+        stars: 4
+
+    },
+
+];
+
+//This is for when users SEND us a review
+
+router.post("/reviews.json", function (req, res) {
+    console.log(req.body);
+    var currentUserName = "Anonymous";
+
+    if ((req.body.username !== undefined) || (req.body.userID !== undefined)) {
+        for (var i = 0; i < users.length; i++) {
+            if ((users[i].username === req.body.username) || (users[i].google === req.body.userID)) {
+                currentUserName = users[i].username;
+                console.log("Found you in our system, " + currentUserName);
+            }
+        }
+        var userReview = {
+            room: req.body.room,
+            userReviewing: currentUserName,
+            reviewText: req.body.reviewText,
+            stars: req.body.stars
+        };
+        console.log("Reviews array after pushing this:");
+        reviews.push(userReview);
+        console.log(reviews);
+        console.log("Pushed the review from " + currentUserName + " Saying: " + req.body.reviewText);
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(403);
+    }
+
+});
+
+
+//Add a new user from Google
+router.post("/newUser.json", function (req, res) {
+
+    var newUser = true;
+
+    for (var i = 0; i < users.length; i++) {
+        if ((users[i].google == req.body.userID)) {
+            newUser = false;
+            res.sendStatus(200);
+        }
+    }
+
+    if (newUser) {
+        //If we have gotten this far, this is a google user we have not seen before
+        var newUser = {
+            username: "googleUser",
+            password: "admin",
+            google: req.body.userID,
+            phone: "-",
+            fullname: "Google User",
+            bookings: []
+        };
+        users.push(newUser);
+        console.log("User not found before, added google info to database");
+        console.log(users);
+        res.sendStatus(200);
+
+    }
+
+});
+
+router.get('/reviews.json', function (req, res) {
+    //TODO make sure they are logged in as admin, this sends all reviews and they are public though
+    res.json(reviews);
+
+});
+
+
+
 let users = [{
     username: "trent",
     password: "bowden",
@@ -40,12 +128,50 @@ let users = [{
             guests: 7
         }],
 
+},{
+    username: "Cindy",
+    password: "Ruan",
+    google: "123456789098765432",
+    phone: "1234567890",
+    fullname: "Cindy Ruan",
+    bookings: [
+        {
+            roomBooked: "Double",
+            userEmail: "cindy@cindy.com",
+            dateIn: "someDate",
+            dateOut: "someDate_Out",
+            guests: 8
+        },
+        {
+            roomBooked: "Family",
+            userEmail: "Cindy@cindy.com",
+            dateIn: "someDate",
+            dateOut: "someDate_Out",
+            guests: 1
+        }],
+
 }];
 var sessions = [];
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', {title: 'Express'});
+});
+
+
+//For the admin page to retrieve all the booking data
+router.get('/allBookings.json', function (req, res) {
+    //to store all the booking data
+    var allBookings = [];
+    console.log("Created an allbookings variable");
+    //Iterating through users to scrape their booking data
+    for (var i = 0; i < users.length; i++) {
+        console.log("About to push stuff for user #"+i);
+        allBookings.push(users[i].bookings);
+    }
+    console.log("Bookings length is " + allBookings.length + " and is compiled from " + users.length + " users.");
+    res.json(allBookings);
+
 });
 
 
