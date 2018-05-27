@@ -47,6 +47,24 @@ function dropAllTables() {
     }
 }
 
+//Create the DB
+function createDatabase() {
+    displayOnPage("createAllInfo", "Database created");
+    console.log(jsonResponse("/createDatabase.json"), null);
+}
+
+
+//Drop (delete contents of) the entire DB
+function dropDatabase() {
+
+    if (confirm("This will delete the ENTIRE database, are you sure?")) {
+        displayOnPage("dropAllInfo", "Database cleared");
+        console.log(jsonResponse("/dropDatabase.json"), null);
+    } else {
+        displayOnPage("dropAllInfo", "Drop Database command cancelled!");
+    }
+}
+
 //Display user table
 function displayUserTable() {
     clear("userData");

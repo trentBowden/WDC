@@ -1,11 +1,10 @@
 var hotelDBName = "hotelDB";
-var hostName = "localhost";
 
 var sqlConData = {
     host: "localhost",
-    user: "hotelAdmin",
-    password: "weLoveWDC",
-    database: hotelDBName
+    user: "root",
+    password: "password",
+    database: "hotelDB"
 };
 
 var express = require('express');
@@ -267,8 +266,34 @@ router.post("/user.json", function (req, res) {
     }
 });
 //TODO make the following
-router.post("/createDBTables.json", function (req, res) {
 
+//Drop the database
+router.post("/dropDatabase.json", function (req, res) {
+    var con = mysql.createConnection(sqlConData);
+
+    con.connect(function(err) {
+        if (err) {
+            console.log("Error connecting");
+            console.log(err.sqlMessage);
+        } else {
+
+        var sql = "DROP DATABASE "+ sqlConData.database;
+        con.query(sql, function(err, result) {
+            if (err) {
+                console.log("Couldn't Drop Database!");
+                // console.log(err);
+                } else {
+                console.log("Database Dropped");
+                // console.log(result);
+            }
+        })
+        }
+    });
+});
+
+
+//Create the database
+router.post("/createDatabase.json", function (req, res) {
     var con = mysql.createConnection({
         host: sqlConData.host,
         user: sqlConData.user,
@@ -276,26 +301,39 @@ router.post("/createDBTables.json", function (req, res) {
     });
 
     //Creating the database
-
     con.connect(
         function (err) {
-        if (err) {
-            throw err;
-        }
-        console.log("Connected!");
-
-        let sql = "CREATE DATABASE "+hotelDBName;
-        con.query(sql, function (err, result) {
             if (err) {
-                throw err;
+                console.log("Error connecting!");
+            } else {
+
+                console.log("Connected!");
+
+                let sql = "CREATE DATABASE IF NOT EXISTS " + sqlConData.database;
+                console.log("executing " + sql);
+                con.query(sql, function (err, result) {
+                    if (err) {
+                        console.log("Error creating database!");
+                        // console.log(err);
+                    } else {
+                        console.log("Created database: " + hotelDBName + " " + result.message);
+                    }
+                });
             }
-            console.log("Result from creating database " + hotelDBName + ": " + result);
         });
-    });
+});
+
+router.post("/createDBTables.json", function (req, res) {
+
+    var con = mysql.createConnection(sqlConData);
+
+    /*
+        use double-/ single quotes for values, strings, etc and backticks for column-names
+     */
 
     //Creating the table (user)
     var userTableCreationSQL = "CREATE TABLE IF NOT EXISTS `user` (" +
-        "`user_id` varchar(255) AUTO INCREMENT NOT NULL," +
+        "`user_id` INT AUTO_INCREMENT NOT NULL," +
         "`user_google` varchar(255)," +
         "`user_email` varchar(255)," +
         "`user_first_name` varchar(255)," +
@@ -305,62 +343,74 @@ router.post("/createDBTables.json", function (req, res) {
         "PRIMARY KEY( `user_id` )" +
         ");";
 
-    var insertTrentUserSQL = "INSERT INTO user " +
-        "(user_google, user_email, user_first_name, user_last_name, password, is_admin) " +
-        "VALUES " +
-        "("+users[0].google +"," + users[0].email +"," +users[0].first +"," +users[0].last +"," +users[0].password +"," +users[0].isAdmin +")";
+    var insertTrentUserSQL = "INSERT INTO" +
+        "  user (" +
+        "    `user_google`," +
+        "    `user_email`," +
+        "    `user_first_name`," +
+        "    `user_last_name`," +
+        "    `password`," +
+        "    `is_admin`" +
+        "  )" +
+        " VALUES" +
+        "  (" +
+        "    '102386789855691027409'," +
+        "    'trent@cs.com'," +
+        "    'trent'," +
+        "    'bowden'," +
+        "    'bowden'," +
+        "    '1'" +
+        "  )";
 
     var bookingTableCreationSQL = "CREATE TABLE booking (" +
-        "booking_id int NOT NULL AUTO INCREMENT," +
-        "User_email varchar(255)," +
-        "Room_id int," +
-        "Book_in_date date," +
-        "Book_out_date date," +
-        "Date_booked date," +
-        "PRIMARY KEY (booking_id)," +
-        "FOREIGN KEY (user_id) REFERENCES user(user_id)," +
-        "FOREIGN KEY (room_id) REFERENCES room(room_id)" +
+        "`booking_id` int AUTO_INCREMENT NOT NULL," +
+        "`user_id` INT NOT NULL," +
+        "`room_id` int," +
+        "`book_in_date` date," +
+        "`book_out_date` date," +
+        "`date_booked` date," +
+        "PRIMARY KEY (`booking_id`)" +
         ");";
 
-    var insertBookingSQL = "INSERT INTO booking (user_email, room_id, book_in_date, book_out_date, date_booked) VALUES" +
-        "(`test@booking`, `001`, `21/1/1921`, `22/2/1989`, `20/1/1921`)";
+    var insertBookingSQL = "INSERT INTO booking (`user_id`, `room_id`, `book_in_date`, `book_out_date`, `date_booked`) VALUES" +
+        "('01', '001', '21/1/1921', '22/2/1989', '20/1/1921')";
 
     var phoneTableCreationSQL = "CREATE TABLE phone (" +
-        "User_email varchar(255)," +
-        "User_phone varchar(255)," +
-        "PRIMARY KEY (user_id)," +
-        "FOREIGN KEY (user_id) REFERENCES user(user_id)," +
+        "`user_id` INT NOT NULL," +
+        "`user_phone` varchar(255)," +
+        "PRIMARY KEY (`user_id`)" +
         ");";
 
     var roomTableCreationSQL = "CREATE TABLE room (" +
-        "Room_id varchar(255)," +
-        "Type varchar(255)," +
-        "Img varchar(255)," +
-        "description varchar(255)," +
-        "Price varchar(255)," +
-        "PRIMARY KEY (room_id));";
-    var roomInsertDescriptionSQL = "INSERT INTO room (room_id, type, img, description, price) VALUES " +
-        "(`001`, `Family`, `imageLink`, `imageDescription`, `$400`)";
+        "`room_id` INT AUTO_INCREMENT NOT NULL," +
+        "`type` varchar(255)," +
+        "`img` varchar(255)," +
+        "`description` varchar(255)," +
+        "`price` varchar(255)," +
+        "PRIMARY KEY (`room_id`));";
+    var roomInsertDescriptionSQL = "INSERT INTO room (type, img, description, price) VALUES " +
+        "('Family', 'imageLink', 'imageDescription', '$400')";
 
-    function queryResult(connection, sql) {
+    function queryResult(connection, sql, summary) {
         connection.query(sql, function (err, result) {
             if (err) {
-                console.log("error executing " + sql);
-                console.log(err);
-                throw err;
+                // console.log("error executing " + sql);
+                console.log("Just a note for "+ summary +": " +  err.sqlMessage);
+            } else {
+            console.log("Executed "+ summary +" successfully");
+            // console.log(result);
             }
-            console.log("Executed: " + sql);
-            console.log(result);
         });
     }
 
-    queryResult(con, userTableCreationSQL);
-    queryResult(con, insertTrentUserSQL);
-    queryResult(con, bookingTableCreationSQL);
-    queryResult(con, insertBookingSQL);
-    queryResult(con, phoneTableCreationSQL);
-    queryResult(con, roomTableCreationSQL);
-    queryResult(con, roomInsertDescriptionSQL);
+    queryResult(con, userTableCreationSQL, "CreateUserTable");
+    queryResult(con, insertTrentUserSQL, "InsertTestUser");
+    queryResult(con, roomTableCreationSQL, "RoomTableCreation");
+    queryResult(con, roomInsertDescriptionSQL, "RoomInsertdefaultData");
+    queryResult(con, bookingTableCreationSQL, "BookingTableCreation");
+    // queryResult(con, insertBookingSQL, "InsertBookingSQL");
+    queryResult(con, phoneTableCreationSQL, "PhoneTableCreation");
+
 
 
     res.sendStatus(200);
@@ -372,7 +422,6 @@ router.post("/dropDBTables.json", function (req, res) {
     function(err) {
         if (err) {
             console.log("Error connecting when attempting to drop the table");
-            throw err;
         }
         console.log("connected to the DB, ready to drop table");
 
@@ -381,7 +430,6 @@ router.post("/dropDBTables.json", function (req, res) {
         con.query(sql, function(err, result) {
             if (err) {
                 console.log("Couldn't drop the tables!");
-                throw err;
             }
             console.log("Tables dropped!");
             console.log(result);

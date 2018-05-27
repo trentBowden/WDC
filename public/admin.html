@@ -91,6 +91,52 @@
         </div>
     </div>
 
+    <hr> <hr>
+    <button onclick = "createDatabase()">Create the Database</button>
+    <button onclick="createAllTables()">Create tables with preloaded data</button>
+    <div id = "createAllInfo"></div>
+    <button onclick="dropAllTables()">Drop all tables</button>
+    <button onclick="dropDatabase()">Drop database</button>
+    <div id = "dropAllInfo"></div>
+    <button onclick="displayAllTables()">Refresh/load all tables</button>
+
+    <!--Display user Data-->
+    <button onclick="displayUserTable()">Refresh/load user table</button><br>
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+            <div class = "textBrief">
+                <h1 id = "userHeader">..</h1>
+                <div id = "userData">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Display all Booking data-->
+    <button onclick="displayBookingTable()">Refresh/load Booking Table</button><br>
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+            <div class = "textBrief">
+                <h1 id = "bookingHeader">..</h1>
+                <div id = "bookingData">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Display information about rooms-->
+    <button onclick="displayRoomTable()">Refresh/load Room description table</button><br>
+    <div class = "horizontalStack light-bg">
+        <div class = "verticalStack content-text">
+            <div class = "textBrief">
+                <h1 id = "roomInfoHeader">..</h1>
+                <div id = "roomDescriptionData">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 
