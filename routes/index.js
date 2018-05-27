@@ -1,4 +1,12 @@
 var hotelDBName = "hotelDB";
+var hostName = "localhost";
+
+var sqlConData = {
+    host: "localhost",
+    user: "hotelAdmin",
+    password: "weLoveWDC",
+    database: hotelDBName
+};
 
 var express = require('express');
 var session = require('express-session');
@@ -34,7 +42,11 @@ let users = [{
     password: "bowden",
     google: "102386789855691027409",
     phone: "0412345678",
+    email: "trent@cs.com",
     fullname: "Trent Bowden",
+    first: "trent",
+    last: "bowden",
+    isAdmin: 1,
     bookings: [
         {
             roomBooked: "family",
@@ -258,12 +270,15 @@ router.post("/user.json", function (req, res) {
 router.post("/createDBTables.json", function (req, res) {
 
     var con = mysql.createConnection({
-        host: "localhost",
-        user: "yourusername",
-        password: "yourpassword"
+        host: sqlConData.host,
+        user: sqlConData.user,
+        password: sqlConData.password
     });
 
-    con.connect(function (err) {
+    //Creating the database
+
+    con.connect(
+        function (err) {
         if (err) {
             throw err;
         }
@@ -278,11 +293,102 @@ router.post("/createDBTables.json", function (req, res) {
         });
     });
 
+    //Creating the table (user)
+    var userTableCreationSQL = "CREATE TABLE IF NOT EXISTS `user` (" +
+        "`user_id` varchar(255) AUTO INCREMENT NOT NULL," +
+        "`user_google` varchar(255)," +
+        "`user_email` varchar(255)," +
+        "`user_first_name` varchar(255)," +
+        "`user_last_name` varchar(255)," +
+        "`password` varchar(255)," +
+        "`is_admin` int," +
+        "PRIMARY KEY( `user_id` )" +
+        ");";
+
+    var insertTrentUserSQL = "INSERT INTO user " +
+        "(user_google, user_email, user_first_name, user_last_name, password, is_admin) " +
+        "VALUES " +
+        "("+users[0].google +"," + users[0].email +"," +users[0].first +"," +users[0].last +"," +users[0].password +"," +users[0].isAdmin +")";
+
+    var bookingTableCreationSQL = "CREATE TABLE booking (" +
+        "booking_id int NOT NULL AUTO INCREMENT," +
+        "User_email varchar(255)," +
+        "Room_id int," +
+        "Book_in_date date," +
+        "Book_out_date date," +
+        "Date_booked date," +
+        "PRIMARY KEY (booking_id)," +
+        "FOREIGN KEY (user_id) REFERENCES user(user_id)," +
+        "FOREIGN KEY (room_id) REFERENCES room(room_id)" +
+        ");";
+
+    var insertBookingSQL = "INSERT INTO booking (user_email, room_id, book_in_date, book_out_date, date_booked) VALUES" +
+        "(`test@booking`, `001`, `21/1/1921`, `22/2/1989`, `20/1/1921`)";
+
+    var phoneTableCreationSQL = "CREATE TABLE phone (" +
+        "User_email varchar(255)," +
+        "User_phone varchar(255)," +
+        "PRIMARY KEY (user_id)," +
+        "FOREIGN KEY (user_id) REFERENCES user(user_id)," +
+        ");";
+
+    var roomTableCreationSQL = "CREATE TABLE room (" +
+        "Room_id varchar(255)," +
+        "Type varchar(255)," +
+        "Img varchar(255)," +
+        "description varchar(255)," +
+        "Price varchar(255)," +
+        "PRIMARY KEY (room_id));";
+    var roomInsertDescriptionSQL = "INSERT INTO room (room_id, type, img, description, price) VALUES " +
+        "(`001`, `Family`, `imageLink`, `imageDescription`, `$400`)";
+
+    function queryResult(connection, sql) {
+        connection.query(sql, function (err, result) {
+            if (err) {
+                console.log("error executing " + sql);
+                console.log(err);
+                throw err;
+            }
+            console.log("Executed: " + sql);
+            console.log(result);
+        });
+    }
+
+    queryResult(con, userTableCreationSQL);
+    queryResult(con, insertTrentUserSQL);
+    queryResult(con, bookingTableCreationSQL);
+    queryResult(con, insertBookingSQL);
+    queryResult(con, phoneTableCreationSQL);
+    queryResult(con, roomTableCreationSQL);
+    queryResult(con, roomInsertDescriptionSQL);
+
 
     res.sendStatus(200);
 });
+
 router.post("/dropDBTables.json", function (req, res) {
-    res.sendStatus(200);
+    var con = mysql.createConnection(sqlConData);
+    con.connect(
+    function(err) {
+        if (err) {
+            console.log("Error connecting when attempting to drop the table");
+            throw err;
+        }
+        console.log("connected to the DB, ready to drop table");
+
+        var sql = "DROP TABLE IF EXISTS  user,booking,phone,room";
+
+        con.query(sql, function(err, result) {
+            if (err) {
+                console.log("Couldn't drop the tables!");
+                throw err;
+            }
+            console.log("Tables dropped!");
+            console.log(result);
+            res.sendStatus(200);
+        })
+    }
+    );
 });
 router.post("/userTable.json", function (req, res) {
     res.sendStatus(200);
