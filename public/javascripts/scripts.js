@@ -2,6 +2,94 @@
 var gUsrData;
 
 /*
+    Admin dashboard functions
+    1. Create User/Booking/Phone/Room tables
+    2. Display User/Booking/Room tables
+    User:
+    Header: "roomHeaderDisplay h1"
+    load: "loadRoomsHere"
+    Booking:
+    Header: "bookingHeader h1"
+    load: "bookingData"
+    Rooms:
+    3. Insert into User/Booking/Room Tables
+    4. Update data in each table
+ */
+
+
+//page = "user.json" for example, will return data.
+//This is a function because reduce reuse recycle code
+function jsonResponse(page, params) {
+    $.post(page, params, function (data) {
+        return data;
+    }, "json");
+}
+function displayOnPage(element, inputText) {
+    $("#"+element).append("<br>" + inputText);
+}
+function clear(element) {
+    $("#"+element).empty();
+}
+
+//Create tables
+function createAllTables() {
+    displayOnPage("createAllInfo", "About to CREATE the database tables");
+     console.log(jsonResponse("/createDBTables.json"), null);
+}
+//Drop (delete contents of) tables
+function dropAllTables() {
+
+    if (confirm("This will delete all content from ALL tables, are you sure?")) {
+        displayOnPage("dropAllInfo", "Tables cleared");
+        console.log(jsonResponse("/dropDBTables.json"), null);
+    } else {
+        displayOnPage("dropAllInfo", "DropTables command cancelled!");
+    }
+}
+
+//Display user table
+function displayUserTable() {
+    clear("userData");
+    clear("userHeader");
+    var allUsers = jsonResponse("/userTable.json", null);
+    displayOnPage("userHeader", "# Users = " + allUsers.length);
+    for (var i = 0; i<allUsers.length; i++) {
+        displayOnPage("userData", allUsers[i]);
+    }
+}
+//Display Booking table
+function displayBookingTable() {
+    clear("bookingHeader");
+    clear("bookingData");
+    var allBookings = jsonResponse("/bookingTable.json", null);
+    displayOnPage("userHeader", "# Bookings = " + allBookings.length);
+    for (var i = 0; i<allBookings.length; i++) {
+        displayOnPage("bookingData", allBookings[i]);
+    }
+}
+//Display Room table
+function displayRoomTable() {
+    clear("roomInfoHeader");
+    clear("roomDescriptionData");
+    var allRooms = jsonResponse("/roomTable.json", null);
+    displayOnPage("roomInfoHeader", "Rooms: = " + allRooms.length);
+    for (var i = 0; i<allRooms.length; i++) {
+        displayOnPage("roomDescriptionData", allRooms[i]);
+    }
+}
+
+//display all tables
+function displayAllTables() {
+    displayUserTable();
+    displayBookingTable();
+    displayRoomTable();
+}
+
+
+
+
+
+/*
 
 
         Generic functions

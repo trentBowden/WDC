@@ -1,5 +1,8 @@
+var hotelDBName = "hotelDB";
+
 var express = require('express');
 var session = require('express-session');
+var mysql = require('mysql');
 const {google} = require('googleapis');
 var router = express.Router();
 
@@ -8,16 +11,7 @@ var {OAuth2Client} = require('google-auth-library');
 var client = new OAuth2Client(CLIENT_ID);
 var gticket;
 
-//Use variables to store content provided by the client
-
-//configuring google API
-const oauth2Client = new google.auth.OAuth2(
-    CLIENT_ID,
-    "h41y-Xl_FbwqO4WH46P8CFem",
-    "/dashboard.html"
-);
-google.options({auth: oauth2Client});
-
+//Premade data
 let reviews = [
     {
         room: "Double",
@@ -35,10 +29,84 @@ let reviews = [
     },
 
 ];
+let users = [{
+    username: "trent",
+    password: "bowden",
+    google: "102386789855691027409",
+    phone: "0412345678",
+    fullname: "Trent Bowden",
+    bookings: [
+        {
+            roomBooked: "family",
+            userEmail: "trent@trent.com",
+            dateIn: "someDate",
+            dateOut: "someDate_Out",
+            guests: 7
+        },
+        {
+            roomBooked: "double",
+            userEmail: "trent@trent.com",
+            dateIn: "someDate",
+            dateOut: "someDate_Out",
+            guests: 7
+        }],
 
-//This is for when users SEND us a review
+}, {
+    username: "Cindy",
+    password: "Ruan",
+    google: "123456789098765432",
+    phone: "1234567890",
+    fullname: "Cindy Ruan",
+    bookings: [
+        {
+            roomBooked: "Double",
+            userEmail: "cindy@cindy.com",
+            dateIn: "someDate",
+            dateOut: "someDate_Out",
+            guests: 8
+        },
+        {
+            roomBooked: "Family",
+            userEmail: "Cindy@cindy.com",
+            dateIn: "someDate",
+            dateOut: "someDate_Out",
+            guests: 1
+        }],
 
+}];
+var sessions = [];
+
+//configuring google API
+const oauth2Client = new google.auth.OAuth2(CLIENT_ID, "h41y-Xl_FbwqO4WH46P8CFem", "/dashboard.html");
+google.options({auth: oauth2Client});
+
+//GET
+router.get('/reviews.json', function (req, res) {
+    //TODO make sure they are logged in as admin, this sends all reviews and they are public though
+    res.json(reviews);
+
+});
+router.get('/', function (req, res, next) {
+    res.render('index', {title: 'Express'});
+});
+router.get('/allBookings.json', function (req, res) {
+    //For the admin page to retrieve all the booking data
+    //to store all the booking data
+    var allBookings = [];
+    console.log("Created an allbookings variable");
+    //Iterating through users to scrape their booking data
+    for (var i = 0; i < users.length; i++) {
+        console.log("About to push stuff for user #" + i);
+        allBookings.push(users[i].bookings);
+    }
+    console.log("Bookings length is " + allBookings.length + " and is compiled from " + users.length + " users.");
+    res.json(allBookings);
+
+});
+
+//POST
 router.post("/reviews.json", function (req, res) {
+    //This is for when users SEND us a review
     console.log(req.body);
     var currentUserName = "Anonymous";
 
@@ -65,10 +133,8 @@ router.post("/reviews.json", function (req, res) {
     }
 
 });
-
-
-//Add a new user from Google
 router.post("/newUser.json", function (req, res) {
+    //Add a new user from Google
 
     var newUser = true;
 
@@ -97,85 +163,8 @@ router.post("/newUser.json", function (req, res) {
     }
 
 });
-
-router.get('/reviews.json', function (req, res) {
-    //TODO make sure they are logged in as admin, this sends all reviews and they are public though
-    res.json(reviews);
-
-});
-
-
-
-let users = [{
-    username: "trent",
-    password: "bowden",
-    google: "102386789855691027409",
-    phone: "0412345678",
-    fullname: "Trent Bowden",
-    bookings: [
-        {
-            roomBooked: "family",
-            userEmail: "trent@trent.com",
-            dateIn: "someDate",
-            dateOut: "someDate_Out",
-            guests: 7
-        },
-        {
-            roomBooked: "double",
-            userEmail: "trent@trent.com",
-            dateIn: "someDate",
-            dateOut: "someDate_Out",
-            guests: 7
-        }],
-
-},{
-    username: "Cindy",
-    password: "Ruan",
-    google: "123456789098765432",
-    phone: "1234567890",
-    fullname: "Cindy Ruan",
-    bookings: [
-        {
-            roomBooked: "Double",
-            userEmail: "cindy@cindy.com",
-            dateIn: "someDate",
-            dateOut: "someDate_Out",
-            guests: 8
-        },
-        {
-            roomBooked: "Family",
-            userEmail: "Cindy@cindy.com",
-            dateIn: "someDate",
-            dateOut: "someDate_Out",
-            guests: 1
-        }],
-
-}];
-var sessions = [];
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Express'});
-});
-
-
-//For the admin page to retrieve all the booking data
-router.get('/allBookings.json', function (req, res) {
-    //to store all the booking data
-    var allBookings = [];
-    console.log("Created an allbookings variable");
-    //Iterating through users to scrape their booking data
-    for (var i = 0; i < users.length; i++) {
-        console.log("About to push stuff for user #"+i);
-        allBookings.push(users[i].bookings);
-    }
-    console.log("Bookings length is " + allBookings.length + " and is compiled from " + users.length + " users.");
-    res.json(allBookings);
-
-});
-
-
-/*
+router.post("/bookings.json", function (req, res) {
+    /*
     Using a combination of GET/POST methods and AJAX, modify your website and server to implement the calls needed to handle the content/information identified in your list from Part 3.
 What this is: content/info to deal with
 
@@ -184,7 +173,6 @@ They must send a POST request, containing either their username or google ID
 TODO update with google verification when that eventually works
 
  */
-router.post("/bookings.json", function (req, res) {
 
     // console.log("bookings request recieved, looping through users to find " + req.body.username + " or " + req.body.userID);
 
@@ -199,23 +187,6 @@ router.post("/bookings.json", function (req, res) {
     }
 
 });
-
-
-function confirmUser(req) {
-    if ((req.body.username !== undefined) || (req.body.userID !== undefined)) {
-        console.log("checking for username " + req.body.username + " or userID " + req.body.userID);
-        for (var i = 0; i < users.length; i++) {
-            if ((users[i].username === req.body.username) || (users[i].google === req.body.userID)) {
-                //User confirmed, let's add their booking.
-                console.log("confirmed! found you as user# " + i + ", " + users[i].username);
-                return i;
-            }
-        }
-        return -1;
-    }
-}
-
-
 router.post("/newbooking.json", function (req, res) {
     var userID = confirmUser(req);
     if (userID != -1) {
@@ -229,9 +200,6 @@ router.post("/newbooking.json", function (req, res) {
         res.json({bookingStatus: "success! booked from " + req.body.dateIn + " to " + req.body.dateOut});
     }
 });
-
-
-//TODO this is changing how we delete bookings
 router.post("/deleteBooking/:bookingID", function (req, res) {
 
     var userID = confirmUser(req);
@@ -241,15 +209,13 @@ router.post("/deleteBooking/:bookingID", function (req, res) {
         var withinBounds = (bookingToDelete <= users[userID].bookings.length); //TODO users.bookings.length-1 would make sense
         if (nonNegative && withinBounds) {
             users[userID].bookings.splice(bookingToDelete, 1);
-            console.log("Booking "+ bookingToDelete +" Deleted Successfully");
+            console.log("Booking " + bookingToDelete + " Deleted Successfully");
             res.sendStatus(200);
         }
     }
 });
-
-
-/* Client has sent us login data */
 router.post("/user.json", function (req, res) {
+    /* Client has sent us login data */
     console.log("Hey that's a request");
     var user = null;
     console.log(JSON.stringify(req.body));
@@ -288,6 +254,60 @@ router.post("/user.json", function (req, res) {
         res.json({username: user});
     }
 });
+//TODO make the following
+router.post("/createDBTables.json", function (req, res) {
 
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "yourusername",
+        password: "yourpassword"
+    });
+
+    con.connect(function (err) {
+        if (err) {
+            throw err;
+        }
+        console.log("Connected!");
+
+        let sql = "CREATE DATABASE "+hotelDBName;
+        con.query(sql, function (err, result) {
+            if (err) {
+                throw err;
+            }
+            console.log("Result from creating database " + hotelDBName + ": " + result);
+        });
+    });
+
+
+    res.sendStatus(200);
+});
+router.post("/dropDBTables.json", function (req, res) {
+    res.sendStatus(200);
+});
+router.post("/userTable.json", function (req, res) {
+    res.sendStatus(200);
+});
+router.post("/bookingTable.json", function (req, res) {
+    res.sendStatus(200);
+});
+router.post("/roomTable.json", function (req, res) {
+    res.sendStatus(200);
+});
+
+
+//FUNCTIONS
+function confirmUser(req) {
+    if ((req.body.username !== undefined) || (req.body.userID !== undefined)) {
+        console.log("checking for username " + req.body.username + " or userID " + req.body.userID);
+        for (var i = 0; i < users.length; i++) {
+            if ((users[i].username === req.body.username) || (users[i].google === req.body.userID)) {
+                //User confirmed, let's add their booking.
+                console.log("confirmed! found you as user# " + i + ", " + users[i].username);
+                return i;
+            }
+        }
+        return -1;
+    }
+}
 
 module.exports = router;
